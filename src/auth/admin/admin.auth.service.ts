@@ -1,76 +1,60 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
-import { UsersService } from "../../users/users.service";
 import { JwtService } from "@nestjs/jwt";
-import { User } from "../../users/entities/user.entity";
-
+import { Admin } from "../../admin/entities/admin.entity";
 import * as bcrypt from "bcrypt";
-import { SignInDto } from "../dto/sign-in.dto";
 import { Request, Response } from "express";
-import { CreateUserDto } from "../../users/dto/create-user.dto";
+import { SignInDto } from "../dto/sign-in.dto";
+import { AdminService } from "../../admin/admin.service";
 
 @Injectable()
-export class UserAuthService {
+export class AdminAuthService {
   constructor(
-    private readonly userService: UsersService,
+    private readonly adminService: AdminService,
     private readonly jwtService: JwtService
   ) {}
 
-  async generateToken(user: User) {
+  async generateToken(admin: Admin) {
     const payload = {
-      id: user.id,
-      is_active: user.is_active,
-      username: user.username,
+      id: admin.id,
+      adminname: admin.username,
+      email: admin.email,
+      is_creator: admin.is_creator,
     };
-    const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        secret: process.env.ACCESS_TOKEN_KEY,
-        expiresIn: process.env.ACCESS_TOKEN_TIME,
-      }),
-      this.jwtService.signAsync(payload, {
-        secret: process.env.REFRESH_TOKEN_KEY,
-        expiresIn: process.env.REFRESH_TOKEN_TIME,
-      }),
-    ]);
-    return {
-      accessToken,
-      refreshToken,
-    };
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.ACCESS_TOKEN_KEY,
+      expiresIn: process.env.ACCESS_TOKEN_TIME,
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: process.env.REFRESH_TOKEN_KEY,
+      expiresIn: process.env.REFRESH_TOKEN_TIME,
+    });
+
+    return { accessToken, refreshToken };
   }
 
-  async signUpUser(createPatientDto: CreateUserDto) {
-    const candidate = await this.userService.findByEmail(
-      createPatientDto.email
-    );
+  async loginAdmin(signInDto: SignInDto, res: Response) {
+    const admin = await this.adminService.findByEmail(signInDto.email);
 
-    if (candidate) {
-      throw new ConflictException("Bunday emailli foydalanuvchi mavjud!");
-    }
-    const newUser = await this.userService.create(createPatientDto);
-    return { message: "User qo'shildi", patientId: newUser.id };
-  }
-
-  async signInUser(signInDto: SignInDto, res: Response) {
-    const user = await this.userService.findByEmail(signInDto.email);
-
-    if (!user) {
+    if (!admin) {
       throw new UnauthorizedException("email yoki parol xato");
     }
 
     const validPassword = await bcrypt.compare(
       signInDto.password,
-      user.password
+      admin.password
     );
 
     if (!validPassword) {
       throw new UnauthorizedException("email yoki parol xato");
     }
 
-    const tokens = await this.generateToken(user);
+    const tokens = await this.generateToken(admin);
 
     res.cookie("refresh-token", tokens.refreshToken, {
       httpOnly: true,
@@ -79,16 +63,16 @@ export class UserAuthService {
 
     const hashed_refresh_token = await bcrypt.hash(tokens.refreshToken, 7);
 
-    user.refresh_token = hashed_refresh_token;
-    await this.userService.save(user);
+    admin.refresh_token = hashed_refresh_token;
+    await this.adminService.save(admin);
 
     return {
-      message: "student logged successfully",
+      message: "admin logged successfully",
       token: tokens.accessToken,
     };
   }
 
-  async signOutUser(req: Request, res: Response) {
+  async logoutAdmin(req: Request, res: Response) {
     const cookieRefreshToken = req.cookies["refresh-token"];
 
     if (!cookieRefreshToken) {
@@ -101,9 +85,9 @@ export class UserAuthService {
       throw new UnauthorizedException("Refresh token xato");
     }
 
-    const user = await this.userService.findByEmail(payload.email);
+    const admin = await this.adminService.findByEmail(payload.email);
 
-    if (!user) {
+    if (!admin) {
       throw new BadRequestException(
         "Bunday refresh tokenli foydalanuvchi topilmadi"
       );
@@ -113,15 +97,15 @@ export class UserAuthService {
       httpOnly: true,
     });
 
-    user.refresh_token = "";
-    await this.userService.save(user);
+    admin.refresh_token = "";
+    await this.adminService.save(admin);
 
     return {
-      message: "user logged out",
+      message: "admin logged out",
     };
   }
 
-  async refreshTokenUser(req: Request, res: Response) {
+  async refreshToken(req: Request, res: Response) {
     const cookieRefreshToken = req.cookies["refresh-token"];
 
     if (!cookieRefreshToken) {
@@ -134,15 +118,15 @@ export class UserAuthService {
       throw new UnauthorizedException("Refresh token xato");
     }
 
-    const user = await this.userService.findByEmail(payload.email);
+    const admin = await this.adminService.findByEmail(payload.email);
 
-    if (!user) {
+    if (!admin) {
       throw new BadRequestException(
         "Bunday refresh tokenli foydalanuvchi topilmadi"
       );
     }
 
-    const tokens = await this.generateToken(user);
+    const tokens = await this.generateToken(admin);
 
     res.cookie("refresh-token", tokens.refreshToken, {
       httpOnly: true,
@@ -151,8 +135,8 @@ export class UserAuthService {
 
     const hashed_refresh_token = await bcrypt.hash(tokens.refreshToken, 7);
 
-    user.refresh_token = hashed_refresh_token;
-    await this.userService.save(user);
+    admin.refresh_token = hashed_refresh_token;
+    await this.adminService.save(admin);
 
     return {
       message: "Refresh token yangilandi",

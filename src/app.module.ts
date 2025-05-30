@@ -13,6 +13,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { ChannelsModule } from './channels/channels.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { AdminModule } from './admin/admin.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
@@ -50,6 +51,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
     ChannelsModule,
     NotificationsModule,
     SubscriptionsModule,
+    AdminModule,
   ],
   controllers: [],
   providers: [],

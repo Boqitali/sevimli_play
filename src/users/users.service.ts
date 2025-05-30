@@ -59,10 +59,6 @@ export class UsersService {
     return this.userRepo.delete({ id });
   }
 
-  findUserByEmail(email: string) {
-    return this.userRepo.findOne({ where: { email } });
-  }
-
   async save(user: User) {
     return this.userRepo.save(user);
   }
