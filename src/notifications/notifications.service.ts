@@ -43,8 +43,15 @@ export class NotificationsService {
     return notification;
   }
 
-  update(id: number, updateNotificationDto: UpdateNotificationDto) {
-    return this.notificationRepo.preload({ id, ...updateNotificationDto });
+  async update(id: number, updateNotificationDto: UpdateNotificationDto) {
+    const notification = await this.notificationRepo.findOne({ where: { id } });
+
+    if (!notification) {
+      throw new NotFoundException(`notification with ID ${id} not found`);
+    }
+
+    Object.assign(notification, updateNotificationDto);
+    return this.notificationRepo.save(notification);
   }
 
   remove(id: number) {

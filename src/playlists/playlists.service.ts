@@ -49,9 +49,14 @@ export class PlaylistsService {
   }
 
   async update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
-    const playlist = await this.findOne(id);
-    const updated = Object.assign(playlist, updatePlaylistDto);
-    return this.playlistRepo.save(updated);
+    const playlist = await this.playlistRepo.findOne({ where: { id } });
+
+    if (!playlist) {
+      throw new NotFoundException(`playlist with ID ${id} not found`);
+    }
+
+    Object.assign(playlist, updatePlaylistDto);
+    return this.playlistRepo.save(playlist);
   }
 
   async remove(id: number) {

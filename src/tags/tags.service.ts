@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateTagDto } from "./dto/create-tag.dto";
 import { UpdateTagDto } from "./dto/update-tag.dto";
 import { Tag } from "./entities/tag.entity";
@@ -23,8 +23,15 @@ export class TagsService {
     return this.tagRepo.findOneBy({ id });
   }
 
-  update(id: number, updateTagDto: UpdateTagDto) {
-    return this.tagRepo.preload({ id, ...updateTagDto });
+  async update(id: number, updateTagDto: UpdateTagDto) {
+    const tag = await this.tagRepo.findOne({ where: { id } });
+
+    if (!tag) {
+      throw new NotFoundException(`tag with ID ${id} not found`);
+    }
+
+    Object.assign(tag, updateTagDto);
+    return this.tagRepo.save(tag);
   }
 
   remove(id: number) {

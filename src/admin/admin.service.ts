@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateAdminDto } from "./dto/create-admin.dto";
 import { UpdateAdminDto } from "./dto/update-admin.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -37,8 +37,15 @@ export class AdminService {
     return this.adminRepo.findOneBy({ id });
   }
 
-  update(id: number, updateAdminDto: UpdateAdminDto) {
-    return this.adminRepo.preload({ id, ...updateAdminDto });
+  async update(id: number, updateAdminDto: UpdateAdminDto) {
+    const admin = await this.adminRepo.findOne({ where: { id } });
+
+    if (!admin) {
+      throw new NotFoundException(`Admin with ID ${id} not found`);
+    }
+
+    Object.assign(admin, updateAdminDto);
+    return this.adminRepo.save(admin);
   }
 
   remove(id: number) {

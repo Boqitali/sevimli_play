@@ -60,6 +60,9 @@ export class UserAuthService {
     if (!user) {
       throw new UnauthorizedException("email yoki parol xato");
     }
+    if(!user.is_active){
+      throw new BadRequestException("Avval emailli tasdiqlang!")
+    }
 
     const validPassword = await bcrypt.compare(
       signInDto.password,

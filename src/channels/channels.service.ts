@@ -39,8 +39,15 @@ export class ChannelsService {
     return channel;
   }
 
-  update(id: number, updateChannelDto: UpdateChannelDto) {
-    return this.channelRepo.preload({ id, ...updateChannelDto });
+  async update(id: number, updateChannelDto: UpdateChannelDto) {
+    const channel = await this.channelRepo.findOne({ where: { id } });
+
+    if (!channel) {
+      throw new NotFoundException(`channel with ID ${id} not found`);
+    }
+
+    Object.assign(channel, updateChannelDto);
+    return this.channelRepo.save(channel);
   }
 
   remove(id: number) {

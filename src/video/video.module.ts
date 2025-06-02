@@ -7,9 +7,10 @@ import { Category } from "../categories/entities/category.entity";
 import { CategoriesService } from "../categories/categories.service";
 import { User } from "../users/entities/user.entity";
 import { UsersService } from "../users/users.service";
+import { MailModule } from "../mail/mail.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Video, Category, User])],
+  imports: [TypeOrmModule.forFeature([Video, Category, User]), MailModule],
   controllers: [VideoController],
   providers: [VideoService, CategoriesService, UsersService],
   exports: [VideoService],

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  ServiceUnavailableException,
 } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -9,11 +10,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
 import { Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
+import { MailService } from "../mail/mail.service";
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly userRepo: Repository<User>
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
+    private readonly mailService: MailService
   ) {}
   async create(createUserDto: CreateUserDto) {
     const { password, confirm_password, ...otherDto } = createUserDto;
@@ -26,6 +29,12 @@ export class UsersService {
       ...otherDto,
       password: hashed_password,
     });
+    try {
+      await this.mailService.sendMail(newUser);
+    } catch (error) {
+      console.log(error);
+      throw new ServiceUnavailableException("Emailga xat yuborisda xatolik");
+    }
     return newUser;
   }
 
@@ -61,5 +70,31 @@ export class UsersService {
 
   async save(user: User) {
     return this.userRepo.save(user);
+  }
+
+  async activateUser(link: string) {
+    if (!link) {
+      throw new BadRequestException("Activation link is not found");
+    }
+
+    const updateResult = await this.userRepo.update(
+      { activation_link: link, is_active: false },
+      { is_active: true }
+    );
+
+    if (updateResult.affected === 0) {
+      throw new BadRequestException(
+        "User already activated or activation link invalid"
+      );
+    }
+
+    const updatedUser = await this.userRepo.findOneBy({
+      activation_link: link,
+    });
+
+    return {
+      message: "User activated successfully!",
+      is_active: updatedUser?.is_active,
+    };
   }
 }

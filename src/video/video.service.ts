@@ -1,4 +1,4 @@
-import { CategoriesController } from './../categories/categories.controller';
+import { CategoriesController } from "./../categories/categories.controller";
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateVideoDto } from "./dto/create-video.dto";
 import { UpdateVideoDto } from "./dto/update-video.dto";
@@ -19,7 +19,6 @@ export class VideoService {
     private readonly categoryRepo: Repository<Category>
   ) {}
 
-  
   async create(createVideoDto: CreateVideoDto) {
     const user = await this.userRepo.findOne({
       where: { id: createVideoDto.userId },
@@ -38,11 +37,11 @@ export class VideoService {
         `category with id ${createVideoDto.categoryId} not found`
       );
     }
-    return this.videoRepo.save({...createVideoDto, user, category});
+    return this.videoRepo.save({ ...createVideoDto, user, category });
   }
 
   findAll() {
-    return this.videoRepo.find({relations: ["user", "category"]});
+    return this.videoRepo.find({ relations: ["user", "category"] });
   }
 
   async findOne(id: number) {
@@ -53,15 +52,22 @@ export class VideoService {
     if (!video) {
       throw new NotFoundException(`video with id ${id} not found`);
     }
-    
+
     return video;
   }
 
-  update(id: number, updateVideoDto: UpdateVideoDto) {
-    return this.videoRepo.preload({id, ...updateVideoDto});
+  async update(id: number, updateVideoDto: UpdateVideoDto) {
+    const video = await this.videoRepo.findOne({ where: { id } });
+
+    if (!video) {
+      throw new NotFoundException(`video with ID ${id} not found`);
+    }
+
+    Object.assign(video, updateVideoDto);
+    return this.videoRepo.save(video);
   }
 
   remove(id: number) {
-    return this.videoRepo.delete({id});
+    return this.videoRepo.delete({ id });
   }
 }

@@ -1,20 +1,38 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateVideoDto } from './create-video.dto';
+import { PartialType } from "@nestjs/mapped-types";
+import { CreateVideoDto } from "./create-video.dto";
+import { IsNotEmpty, IsString, IsUrl, IsInt, Min } from "class-validator";
 
 export class UpdateVideoDto extends PartialType(CreateVideoDto) {
-    // title: string;
+  @IsNotEmpty()
+  @IsString()
+  title: string;
 
-    // description: string;
-  
-    // url: string;
-  
-    // thumbnail_url: string;
-  
-    // views: number;
-  
-    // country_movie: string;
-  
-    // userId: number;
-  
-    // categoryId: number;
+  @IsNotEmpty()
+  @IsString()
+  description: string;
+
+  @IsNotEmpty()
+  @IsUrl()
+  url: string;
+
+  @IsNotEmpty()
+  @IsUrl()
+  thumbnail_url: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  @Min(0)
+  views: number;
+
+  @IsNotEmpty()
+  @IsString()
+  country_movie: string;
+
+  @IsNotEmpty()
+  @IsInt()
+  userId: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  categoryId: number;
 }

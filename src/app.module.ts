@@ -14,6 +14,16 @@ import { ChannelsModule } from './channels/channels.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { AdminModule } from './admin/admin.module';
+import { WatchHistoryModule } from './watch_history/watch_history.module';
+import { ReportModule } from './report/report.module';
+import { PremiumPlansModule } from './premium_plans/premium_plans.module';
+import { PremiumSubscriptionsModule } from './premium_subscriptions/premium_subscriptions.module';
+import { PaymentModule } from './payment/payment.module';
+import { LikesModule } from './likes/likes.module';
+import { CommentsModule } from './comments/comments.module';
+import { VideoTagsModule } from './video_tags/video_tags.module';
+import { PlaylistVideoModule } from './playlist_video/playlist_video.module';
+import { MailModule } from './mail/mail.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: ".env", isGlobal: true }),
@@ -52,6 +62,16 @@ import { AdminModule } from './admin/admin.module';
     NotificationsModule,
     SubscriptionsModule,
     AdminModule,
+    WatchHistoryModule,
+    ReportModule,
+    PremiumPlansModule,
+    PremiumSubscriptionsModule,
+    PaymentModule,
+    LikesModule,
+    CommentsModule,
+    VideoTagsModule,
+    PlaylistVideoModule,
+    MailModule,
   ],
   controllers: [],
   providers: [],

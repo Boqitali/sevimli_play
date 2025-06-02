@@ -14,7 +14,7 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
-  @IsPhoneNumber()
+  @IsPhoneNumber("UZ")
   phone: string;
 
   @IsString()
@@ -28,12 +28,4 @@ export class CreateUserDto {
   @IsOptional()
   @IsString()
   profile_image: string;
-
-  @IsOptional()
-  @IsString()
-  role: string;
-
-  @IsString()
-  @IsNotEmpty()
-  activation_link: string;
 }
