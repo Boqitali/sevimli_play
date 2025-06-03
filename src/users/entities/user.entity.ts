@@ -17,35 +17,76 @@ import { Payment } from "../../payment/entities/payment.entity";
 import { Comment } from "../../comments/entities/comment.entity";
 import { Like } from "../../likes/entities/like.entity";
 import { v4 as uuidv4 } from "uuid";
+import { ApiProperty } from "@nestjs/swagger";
 @Entity()
 export class User {
+  @ApiProperty({
+    example: 1,
+    description: "Userning uniqal ID raqami",
+  })
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({
+    example: "Ali Valiyev",
+    description: "Userning ism familiyasi",
+  })
   @Column({ unique: true })
   username: string;
 
+  @ApiProperty({
+    example: "userjon@gmail.com",
+    description: "Userning email pochtasi",
+  })
   @Column({ unique: true })
   email: string;
 
+  @ApiProperty({
+    example: "+998916066606",
+    description: "Userning telefon raqami",
+  })
   @Column({ unique: true })
   phone: string;
 
+  @ApiProperty({
+    example: "hashedpassword123",
+    description: "Userning paroli",
+  })
   @Column()
   password: string;
 
+  @ApiProperty({
+    example: "profile.jpg",
+    description: "Userning rasmi",
+  })
   @Column({ nullable: true })
   profile_image: string;
 
+  @ApiProperty({
+    example: "2025-11-11",
+    description: "Userning datasi",
+  })
   @CreateDateColumn()
   created_at: Date;
 
+  @ApiProperty({
+    example: false,
+    description: "Userning faolligi",
+  })
   @Column({ default: false })
   is_active: boolean;
 
+  @ApiProperty({
+    example: null,
+    description: "Userning refresh_token",
+  })
   @Column({ default: "" })
   refresh_token: string;
 
+  @ApiProperty({
+    example: "",
+    description: "Userning activet qilganligi",
+  })
   @Column({ default: () => `'${uuidv4()}'` })
   activation_link: string;
 

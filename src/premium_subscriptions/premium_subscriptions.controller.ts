@@ -2,33 +2,74 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PremiumSubscriptionsService } from './premium_subscriptions.service';
 import { CreatePremiumSubscriptionDto } from './dto/create-premium_subscription.dto';
 import { UpdatePremiumSubscriptionDto } from './dto/update-premium_subscription.dto';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { PremiumSubscription } from './entities/premium_subscription.entity';
 
-@Controller('premium-subscriptions')
+@Controller("premium-subscriptions")
 export class PremiumSubscriptionsController {
-  constructor(private readonly premiumSubscriptionsService: PremiumSubscriptionsService) {}
+  constructor(
+    private readonly premiumSubscriptionsService: PremiumSubscriptionsService
+  ) {}
 
+  @ApiOperation({ summary: "Yangi premium obuna yaratish" })
+  @ApiResponse({
+    status: 201,
+    description: "Premium obuna muvaffaqiyatli yaratildi.",
+    type: PremiumSubscription,
+  })
   @Post()
   create(@Body() createPremiumSubscriptionDto: CreatePremiumSubscriptionDto) {
-    return this.premiumSubscriptionsService.create(createPremiumSubscriptionDto);
+    return this.premiumSubscriptionsService.create(
+      createPremiumSubscriptionDto
+    );
   }
 
+  @ApiOperation({ summary: "Barcha premium obunalarni olish" })
+  @ApiResponse({
+    status: 200,
+    description: "Premium obunalar ro'yxati",
+    type: [PremiumSubscription],
+  })
   @Get()
   findAll() {
     return this.premiumSubscriptionsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @ApiOperation({ summary: "ID bo'yicha premium obunani olish" })
+  @ApiResponse({
+    status: 200,
+    description: "Premium obuna",
+    type: PremiumSubscription,
+  })
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.premiumSubscriptionsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePremiumSubscriptionDto: UpdatePremiumSubscriptionDto) {
-    return this.premiumSubscriptionsService.update(+id, updatePremiumSubscriptionDto);
+  @ApiOperation({ summary: "Premium obunani yangilash" })
+  @ApiResponse({
+    status: 200,
+    description: "Yangilangan premium obuna",
+    type: PremiumSubscription,
+  })
+  @Patch(":id")
+  update(
+    @Param("id") id: string,
+    @Body() updatePremiumSubscriptionDto: UpdatePremiumSubscriptionDto
+  ) {
+    return this.premiumSubscriptionsService.update(
+      +id,
+      updatePremiumSubscriptionDto
+    );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @ApiOperation({ summary: "Premium obunani o'chirish" })
+  @ApiResponse({
+    status: 200,
+    description: "Premium obuna muvaffaqiyatli o'chirildi",
+  })
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.premiumSubscriptionsService.remove(+id);
   }
 }
