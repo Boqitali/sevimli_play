@@ -1,4 +1,4 @@
-import { IsDate, IsEmpty, IsNumber, IsString } from "class-validator";
+import { IsDate, IsEmpty, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { Video } from "../../video/entities/video.entity";
 import { ApiProperty } from "@nestjs/swagger";
 import { User } from "../../users/entities/user.entity";
@@ -20,6 +20,6 @@ export class CreateCommentDto {
     description: "Foydalanuvchi kommentariyasi",
   })
   @IsString()
-  @IsEmpty()
+  @IsNotEmpty()
   comment: string;
 }

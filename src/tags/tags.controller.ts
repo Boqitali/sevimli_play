@@ -6,17 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { TagsService } from "./tags.service";
 import { CreateTagDto } from "./dto/create-tag.dto";
 import { UpdateTagDto } from "./dto/update-tag.dto";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Tag } from "./entities/tag.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
 
 @Controller("tags")
 export class TagsController {
   constructor(private readonly tagsService: TagsService) {}
 
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "Taglarni qo'shish" })
   @ApiResponse({
     status: 201,
@@ -28,6 +32,7 @@ export class TagsController {
     return this.tagsService.create(createTagDto);
   }
 
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Barcha taglarni olish" })
   @ApiResponse({
     status: 200,
@@ -39,6 +44,7 @@ export class TagsController {
     return this.tagsService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Tagni id bilan olish" })
   @ApiResponse({
     status: 200,
@@ -50,6 +56,7 @@ export class TagsController {
     return this.tagsService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "Tagni id bilan yangilash" })
   @ApiResponse({
     status: 200,
@@ -61,6 +68,7 @@ export class TagsController {
     return this.tagsService.update(+id, updateTagDto);
   }
 
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "Tagni id bilan o'chirish" })
   @ApiResponse({
     status: 200,

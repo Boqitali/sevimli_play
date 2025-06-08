@@ -6,14 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { CategoriesService } from "./categories.service";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Category } from "./entities/category.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
+import { Roles } from "../common/decorators/rols.auth-decorator";
 
 @Controller("categories")
+@UseGuards(AuthGuard, RolesGuard)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
@@ -23,6 +28,7 @@ export class CategoriesController {
     description: "Kategoriya yaratildi",
     type: Category,
   })
+  @Roles("admin", "user")
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.create(createCategoryDto);
@@ -34,6 +40,7 @@ export class CategoriesController {
     description: "Kategoriyalar ro'yxati",
     type: [Category],
   })
+  @Roles("admin", "user")
   @Get()
   findAll() {
     return this.categoriesService.findAll();
@@ -45,6 +52,7 @@ export class CategoriesController {
     description: "Topilgan kategoriya",
     type: Category,
   })
+  @Roles("admin", "user")
   @Get(":id")
   findOne(@Param("id") id: string) {
     return this.categoriesService.findOne(+id);
@@ -56,6 +64,7 @@ export class CategoriesController {
     description: "Kategoriya yangilandi",
     type: Category,
   })
+  @Roles("admin")
   @Patch(":id")
   update(
     @Param("id") id: string,
@@ -70,6 +79,7 @@ export class CategoriesController {
     description: "Kategoriya ochirildi",
     type: Category,
   })
+  @Roles("admin")
   @Delete(":id")
   remove(@Param("id") id: string) {
     return this.categoriesService.remove(+id);

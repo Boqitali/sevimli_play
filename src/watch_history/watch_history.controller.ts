@@ -6,17 +6,24 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { WatchHistoryService } from "./watch_history.service";
 import { CreateWatchHistoryDto } from "./dto/create-watch_history.dto";
 import { UpdateWatchHistoryDto } from "./dto/update-watch_history.dto";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { WatchHistory } from "./entities/watch_history.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
+import { UserSelfGuard } from "../common/guards/user.self.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
+import { Roles } from "../common/decorators/rols.auth-decorator";
 
 @Controller("watch-history")
 export class WatchHistoryController {
   constructor(private readonly watchHistoryService: WatchHistoryService) {}
 
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Tomosha tarixiga yangi yozuv qo'shish" })
   @ApiResponse({
     status: 201,
@@ -28,6 +35,7 @@ export class WatchHistoryController {
     return this.watchHistoryService.create(createWatchHistoryDto);
   }
 
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "Barcha tomosha tarixlarini olish" })
   @ApiResponse({
     status: 200,
@@ -39,6 +47,8 @@ export class WatchHistoryController {
     return this.watchHistoryService.findAll();
   }
 
+  @Roles("user")
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: "ID orqali bitta tomosha tarixini olish" })
   @ApiResponse({
     status: 200,
@@ -50,6 +60,8 @@ export class WatchHistoryController {
     return this.watchHistoryService.findOne(+id);
   }
 
+  @Roles("user")
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: "Tomosha tarixini yangilash" })
   @ApiResponse({
     status: 200,
@@ -64,11 +76,13 @@ export class WatchHistoryController {
     return this.watchHistoryService.update(+id, updateWatchHistoryDto);
   }
 
+  @Roles("user")
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: "Tomosha tarixini o'chirish" })
-  @ApiResponse({ 
-    status: 200, 
-    description: "O'chirildi", 
-    type: WatchHistory 
+  @ApiResponse({
+    status: 200,
+    description: "O'chirildi",
+    type: WatchHistory,
   })
   @Delete(":id")
   remove(@Param("id") id: string) {

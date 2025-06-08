@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { PremiumSubscriptionsService } from './premium_subscriptions.service';
 import { CreatePremiumSubscriptionDto } from './dto/create-premium_subscription.dto';
 import { UpdatePremiumSubscriptionDto } from './dto/update-premium_subscription.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PremiumSubscription } from './entities/premium_subscription.entity';
+import { AuthGuard } from '../common/guards/auth.guard';
 
 @Controller("premium-subscriptions")
+@UseGuards(AuthGuard)
 export class PremiumSubscriptionsController {
   constructor(
     private readonly premiumSubscriptionsService: PremiumSubscriptionsService

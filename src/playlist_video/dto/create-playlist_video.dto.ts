@@ -6,7 +6,7 @@ import { Playlist } from "../../playlists/entities/playlist.entity";
 export class CreatePlaylistVideoDto {
   @ApiProperty({ type: () => Playlist, description: "Bog'langan Playlist" })
   @IsNumber()
-  playListId: number;
+  playlistId: number;
 
   @ApiProperty({ type: () => Video, description: "Bog'langan Video" })
   @IsNumber()

@@ -25,6 +25,7 @@ export class UserAuthService {
       id: user.id,
       is_active: user.is_active,
       username: user.username,
+      role: "user"
     };
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {

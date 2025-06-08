@@ -6,17 +6,23 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { SubscriptionsService } from "./subscriptions.service";
 import { CreateSubscriptionDto } from "./dto/create-subscription.dto";
 import { UpdateSubscriptionDto } from "./dto/update-subscription.dto";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Subscription } from "./entities/subscription.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { RolesGuard } from "../common/guards/roles.guard";
+import { Roles } from "../common/decorators/rols.auth-decorator";
 
 @Controller("subscriptions")
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
+  @Roles("user")
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: "Yangi obuna yaratish" })
   @ApiResponse({
     status: 201,
@@ -28,6 +34,8 @@ export class SubscriptionsController {
     return this.subscriptionsService.create(createSubscriptionDto);
   }
 
+  @Roles("admin")
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: "Barcha obunalarni olish" })
   @ApiResponse({
     status: 200,
@@ -39,6 +47,8 @@ export class SubscriptionsController {
     return this.subscriptionsService.findAll();
   }
 
+  @Roles("admin")
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: "ID orqali bitta obunani olish" })
   @ApiResponse({
     status: 200,
@@ -50,6 +60,8 @@ export class SubscriptionsController {
     return this.subscriptionsService.findOne(+id);
   }
 
+  @Roles("user")
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: "Obunani yangilash" })
   @ApiResponse({
     status: 200,
@@ -64,6 +76,8 @@ export class SubscriptionsController {
     return this.subscriptionsService.update(+id, updateSubscriptionDto);
   }
 
+  @Roles("admin")
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiOperation({ summary: "Obunani o'chirish" })
   @ApiResponse({
     status: 200,

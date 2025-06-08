@@ -28,11 +28,11 @@ export class PlaylistVideoService {
     }
 
     const playlist = await this.playlistRepo.findOne({
-      where: { id: createPlaylistVideoDto.playListId },
+      where: { id: createPlaylistVideoDto.playlistId },
     });
     if (!playlist) {
       throw new NotFoundException(
-        `playlist with id ${createPlaylistVideoDto.playListId} not found`
+        `playlist with id ${createPlaylistVideoDto.playlistId} not found`
       );
     }
     return this.playListVideoRepo.save({

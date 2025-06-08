@@ -23,6 +23,7 @@ export class AdminAuthService {
       adminname: admin.username,
       email: admin.email,
       is_creator: admin.is_creator,
+      role: "admin"
     };
 
     const accessToken = this.jwtService.sign(payload, {

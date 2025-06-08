@@ -6,12 +6,18 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { User } from "./entities/user.entity";
+import { Roles } from "../common/decorators/rols.auth-decorator";
+import { RolesGuard } from "../common/guards/roles.guard";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { UserGuard } from "../common/guards/user.guard";
+import { UserSelfGuard } from "../common/guards/user.self.guard";
 
 @Controller("users")
 export class UsersController {
@@ -28,6 +34,9 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Roles("admin")
+  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Barcha userlarni olish" })
   @ApiResponse({
     status: 200,
@@ -39,6 +48,8 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @UseGuards(UserGuard, UserSelfGuard)
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Userni id bilan olish" })
   @ApiResponse({
     status: 200,
@@ -50,6 +61,8 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
+  @UseGuards(UserGuard, UserSelfGuard)
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Userni id bilan yangilash" })
   @ApiResponse({
     status: 200,
@@ -61,6 +74,9 @@ export class UsersController {
     return this.usersService.update(+id, updateUserDto);
   }
 
+  @Roles("admin")
+  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: "Userni id bilan o'chirish" })
   @ApiResponse({
     status: 200,

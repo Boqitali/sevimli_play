@@ -6,17 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { PremiumPlansService } from "./premium_plans.service";
 import { CreatePremiumPlanDto } from "./dto/create-premium_plan.dto";
 import { UpdatePremiumPlanDto } from "./dto/update-premium_plan.dto";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { PremiumPlan } from "./entities/premium_plan.entity";
+import { AuthGuard } from "../common/guards/auth.guard";
+import { AdminGuard } from "../common/guards/admin.guard";
 
 @Controller("premium-plans")
 export class PremiumPlansController {
   constructor(private readonly premiumPlansService: PremiumPlansService) {}
 
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "Yangi premium reja yaratish" })
   @ApiResponse({
     status: 201,
@@ -28,6 +32,7 @@ export class PremiumPlansController {
     return this.premiumPlansService.create(createPremiumPlanDto);
   }
 
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "Barcha premium rejalarni olish" })
   @ApiResponse({
     status: 200,
@@ -39,6 +44,7 @@ export class PremiumPlansController {
     return this.premiumPlansService.findAll();
   }
 
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "ID bo'yicha premium rejani olish" })
   @ApiResponse({ status: 200, description: "Topilgan reja", type: PremiumPlan })
   @Get(":id")
@@ -46,6 +52,7 @@ export class PremiumPlansController {
     return this.premiumPlansService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "Premium rejani yangilash" })
   @ApiResponse({
     status: 200,
@@ -60,6 +67,7 @@ export class PremiumPlansController {
     return this.premiumPlansService.update(+id, updatePremiumPlanDto);
   }
 
+  @UseGuards(AuthGuard, AdminGuard)
   @ApiOperation({ summary: "Premium rejani o'chirish" })
   @ApiResponse({
     status: 200,

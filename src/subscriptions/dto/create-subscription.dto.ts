@@ -3,15 +3,7 @@ import { Type } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateSubscriptionDto {
-  @ApiProperty({
-    example: "2025-06-03T10:15:30.000Z",
-    description: "Foydalanuvchi obuna bo‘lgan vaqti",
-  })
-  @IsNotEmpty()
-  @Type(() => Date)
-  @IsDate()
-  subscribed_at: Date;
-
+  
   @ApiProperty({
     example: "User ID raqami",
     description: "Obuna bo'lgan foydalanuvchi",

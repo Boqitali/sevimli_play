@@ -4,6 +4,9 @@ import { BadRequestException, ValidationPipe } from "@nestjs/common";
 import * as cookieParser from "cookie-parser";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import * as basicAuth from "express-basic-auth";
+import { WinstonModule } from "nest-winston";
+import { winstonConfig } from "./common/logger/winston.logger";
+import { AllExceptionFilter } from "./common/error/error.handling";
 
 const cors = require("cors");
 
@@ -11,8 +14,9 @@ async function start() {
   try {
     const PORT = process.env.API_PORT || 3030;
     const app = await NestFactory.create(AppModule, {
-      logger: ["error", "warn"],
+      logger: WinstonModule.createLogger(winstonConfig, ),
     });
+    // app.useGlobalFilters(new AllExceptionFilter());
     app.use(cookieParser());
     app.use(cors());
     app.enableCors({
