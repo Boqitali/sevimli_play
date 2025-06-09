@@ -8,10 +8,7 @@ import { Request, Response } from "express";
 export class UserAuthController {
   constructor(private readonly authService: UserAuthService) {}
 
-  @Post("sign-up")
-  async signUp(@Body() createUserDto: CreateUserDto) {
-    return this.authService.signUpUser(createUserDto);
-  }
+  
 
   @Post("sign-in")
   async signIn(

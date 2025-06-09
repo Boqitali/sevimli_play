@@ -43,17 +43,7 @@ export class UserAuthService {
     };
   }
 
-  async signUpUser(createPatientDto: CreateUserDto) {
-    const candidate = await this.userService.findByEmail(
-      createPatientDto.email
-    );
 
-    if (candidate) {
-      throw new ConflictException("Bunday emailli foydalanuvchi mavjud!");
-    }
-    const newUser = await this.userService.create(createPatientDto);
-    return { message: "User qo'shildi", patientId: newUser.id };
-  }
 
   async signInUser(signInDto: SignInDto, res: Response) {
     const user = await this.userService.findByEmail(signInDto.email);
